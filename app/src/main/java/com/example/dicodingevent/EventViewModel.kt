@@ -5,7 +5,7 @@ import retrofit2.Callback
 import retrofit2.Call
 import retrofit2.Response
 
-class UpcomingViewModel : ViewModel() {
+class EventViewModel() : ViewModel() {
     private val _events = MutableLiveData<List<ListEventsItem>>()
     val events: LiveData<List<ListEventsItem>> = _events
 
@@ -24,6 +24,7 @@ class UpcomingViewModel : ViewModel() {
 
     fun fetchEvents(active: Int) {
         _isLoading.value = true
+        _events.value = emptyList() // Clear the current list before fetching new data
         ApiConfig.getApiService().getEvents(active).enqueue(object : Callback<EventResponse> {
             override fun onResponse(call: Call<EventResponse>, response: Response<EventResponse>) {
                 _isLoading.value = false

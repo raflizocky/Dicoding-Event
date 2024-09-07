@@ -7,13 +7,13 @@
 
     <fragment
         android:id="@+id/navigation_upcoming"
-        android:name="com.example.dicodingevent.ui.home.HomeFragment"
+        android:name="com.example.dicodingevent.ui.upcoming.UpcomingFragment"
         android:label="@string/title_upcoming"
         tools:layout="@layout/fragment_home" />
 
     <fragment
         android:id="@+id/navigation_finished"
-        android:name="com.example.dicodingevent.ui.dashboard.DashboardFragment"
+        android:name="com.example.dicodingevent.ui.finished.FinishedFragment"
         android:label="@string/title_finished"
         tools:layout="@layout/fragment_dashboard" />
 </navigation>
