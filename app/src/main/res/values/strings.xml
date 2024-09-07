@@ -3,4 +3,11 @@
     <string name="title_activity_main">MainActivity</string>
     <string name="title_upcoming">Upcoming</string>
     <string name="title_finished">Finished</string>
+    <string name="your_title_here">Your Title Here</string>
+    <string name="no_events_found">No events found.</string>
+    <string name="no_events_foundd">No events found.</string>
+    <string name="todo">TODO</string>
+    <string name="informasi">Informasi:</string>
+    <string name="register">Register</string>
+    <string name="todoo">TODO</string>
 </resources>

@@ -106,11 +106,15 @@ class UpcomingFragment : Fragment() {
     private fun observeViewModel() {
         viewModel.events.observe(viewLifecycleOwner) { events ->
             adapter.submitList(events)
+            updateNoDataVisibility(events.isEmpty())
         }
 
         viewModel.isLoading.observe(viewLifecycleOwner) { isLoading ->
             binding.progressBar.isVisible = isLoading
             binding.rvEvents.isVisible = !isLoading
+            if (isLoading) {
+                binding.tvNoData.isVisible = false
+            }
         }
 
         viewModel.networkState.observe(viewLifecycleOwner) { isConnected ->
@@ -126,6 +130,11 @@ class UpcomingFragment : Fragment() {
                 showErrorSnackbar(errorMessage)
             }
         }
+    }
+
+    private fun updateNoDataVisibility(showNoData: Boolean) {
+        binding.tvNoData.isVisible = showNoData
+        binding.rvEvents.isVisible = !showNoData
     }
 
     @RequiresApi(Build.VERSION_CODES.M)

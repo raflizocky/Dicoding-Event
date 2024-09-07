@@ -27,7 +27,8 @@
             android:layout_height="200dp"
             android:scaleType="centerCrop"
             app:layout_constraintTop_toTopOf="parent"
-            tools:src="@tools:sample/backgrounds/scenic" />
+            tools:src="@tools:sample/backgrounds/scenic"
+            android:contentDescription="@string/todo" />
 
         <androidx.cardview.widget.CardView
             android:id="@+id/cardView"
@@ -72,7 +73,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
-                    android:text="Informasi:"
+                    android:text="@string/informasi"
                     android:textStyle="bold" />
 
                 <TextView
@@ -87,7 +88,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="24dp"
-                    android:text="Register"
+                    android:text="@string/register"
                     android:textColor="#FFFFFF" />
 
             </LinearLayout>
