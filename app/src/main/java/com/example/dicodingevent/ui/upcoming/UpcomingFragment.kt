@@ -15,8 +15,8 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.dicodingevent.EventAdapter
-import com.example.dicodingevent.EventViewModel
+import com.example.dicodingevent.ui.EventAdapter
+import com.example.dicodingevent.ui.EventViewModel
 import com.example.dicodingevent.databinding.FragmentHomeBinding
 import com.google.android.material.snackbar.Snackbar
 

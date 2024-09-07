@@ -1,4 +1,4 @@
-package com.example.dicodingevent
+package com.example.dicodingevent.data.response
 
 import com.google.gson.annotations.SerializedName
 

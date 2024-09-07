@@ -1,5 +1,7 @@
-package com.example.dicodingevent
+package com.example.dicodingevent.data.retrofit
 
+import com.example.dicodingevent.data.response.DetailEventResponse
+import com.example.dicodingevent.data.response.EventResponse
 import retrofit2.Call
 import retrofit2.http.*
 

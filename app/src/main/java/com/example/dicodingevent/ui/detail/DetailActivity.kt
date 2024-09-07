@@ -1,4 +1,4 @@
-package com.example.dicodingevent
+package com.example.dicodingevent.ui.detail
 
 import android.content.Intent
 import android.net.Uri
@@ -8,6 +8,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.text.HtmlCompat
 import com.bumptech.glide.Glide
 import androidx.core.view.isVisible
+import com.example.dicodingevent.R
+import com.example.dicodingevent.data.response.Event
 import com.example.dicodingevent.databinding.ActivityDetailBinding
 import com.google.android.material.snackbar.Snackbar
 import java.text.SimpleDateFormat
@@ -55,7 +57,8 @@ class DetailActivity : AppCompatActivity() {
 
             tvEventName.text = event.name
             tvEventDate.text = formatDateTime(event.beginTime ?: "")
-            tvEventLocation.text = "Sisa Kuota: ${(event.quota ?: 0) - (event.registrants ?: 0)}"
+            val remainingQuota = (event.quota ?: 0) - (event.registrants ?: 0)
+            tvEventLocation.text = getString(R.string.quota_info, remainingQuota)
             tvEventDescription.text = HtmlCompat.fromHtml(
                 event.description ?: "",
                 HtmlCompat.FROM_HTML_MODE_LEGACY

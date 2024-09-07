@@ -1,4 +1,4 @@
-package com.example.dicodingevent
+package com.example.dicodingevent.ui
 
 import android.content.Intent
 import android.view.LayoutInflater
@@ -7,7 +7,9 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.example.dicodingevent.data.response.ListEventsItem
 import com.example.dicodingevent.databinding.ItemEventBinding
+import com.example.dicodingevent.ui.detail.DetailActivity
 
 class EventAdapter : ListAdapter<ListEventsItem, EventAdapter.MyViewHolder>(DIFF_CALLBACK) {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {

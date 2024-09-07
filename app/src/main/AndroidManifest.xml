@@ -16,10 +16,10 @@
         android:theme="@style/Theme.DicodingEvent"
         tools:targetApi="31">
         <activity
-            android:name=".DetailActivity"
+            android:name=".ui.detail.DetailActivity"
             android:exported="false" />
         <activity
-            android:name=".MainActivity"
+            android:name=".ui.MainActivity"
             android:exported="true"
             android:label="@string/title_activity_main">
             <intent-filter>

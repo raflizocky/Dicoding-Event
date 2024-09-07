@@ -1,8 +1,11 @@
-package com.example.dicodingevent
+package com.example.dicodingevent.ui.detail
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.example.dicodingevent.data.retrofit.ApiConfig
+import com.example.dicodingevent.data.response.DetailEventResponse
+import com.example.dicodingevent.data.response.Event
 import retrofit2.*
 
 class DetailViewModel : ViewModel() {

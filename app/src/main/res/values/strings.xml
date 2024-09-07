@@ -10,4 +10,5 @@
     <string name="informasi">Informasi:</string>
     <string name="register">Register</string>
     <string name="todoo">TODO</string>
+    <string name="quota_info">Sisa kuota: %d</string>
 </resources>

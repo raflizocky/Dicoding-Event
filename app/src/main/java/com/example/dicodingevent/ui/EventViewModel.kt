@@ -1,6 +1,9 @@
-package com.example.dicodingevent
+package com.example.dicodingevent.ui
 
 import androidx.lifecycle.*
+import com.example.dicodingevent.data.retrofit.ApiConfig
+import com.example.dicodingevent.data.response.EventResponse
+import com.example.dicodingevent.data.response.ListEventsItem
 import retrofit2.Callback
 import retrofit2.Call
 import retrofit2.Response
