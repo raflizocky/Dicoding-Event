@@ -1,5 +1,6 @@
 package com.example.dicodingevent
 
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
@@ -25,6 +26,13 @@ class EventAdapter : ListAdapter<ListEventsItem, EventAdapter.MyViewHolder>(DIFF
             Glide.with(itemView.context)
                 .load(event.imageLogo)
                 .into(binding.itemImageView)
+
+            itemView.setOnClickListener {
+                val intent = Intent(itemView.context, DetailActivity::class.java).apply {
+                    putExtra(DetailActivity.EVENT_DETAIL, event.id.toString())
+                }
+                itemView.context.startActivity(intent)
+            }
         }
     }
 
