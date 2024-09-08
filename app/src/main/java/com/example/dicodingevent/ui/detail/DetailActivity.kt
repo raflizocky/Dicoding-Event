@@ -11,6 +11,8 @@ import androidx.core.view.isVisible
 import com.example.dicodingevent.R
 import com.example.dicodingevent.data.response.Event
 import com.example.dicodingevent.databinding.ActivityDetailBinding
+import com.example.dicodingevent.di.Injection
+import com.example.dicodingevent.ui.ViewModelFactory
 import com.google.android.material.snackbar.Snackbar
 import java.text.SimpleDateFormat
 import java.util.Locale
@@ -19,9 +21,12 @@ class DetailActivity : AppCompatActivity() {
     companion object {
         const val EVENT_DETAIL = "event_detail"
     }
+
     private lateinit var binding: ActivityDetailBinding
 
-    private val viewModel: DetailViewModel by viewModels()
+    private val viewModel: DetailViewModel by viewModels {
+        ViewModelFactory.getInstance(Injection.provideRepository(this))
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,6 +37,7 @@ class DetailActivity : AppCompatActivity() {
 
         viewModel.fetchEventDetails(eventId)
         observeViewModel()
+        setupFavoriteButton()
     }
 
     private fun observeViewModel() {
@@ -47,7 +53,25 @@ class DetailActivity : AppCompatActivity() {
         viewModel.errorMessage.observe(this) { errorMessage ->
             showSnackbar(errorMessage)
         }
+
+        viewModel.isFavorite.observe(this) { isFavorite ->
+            updateFavoriteButtonState(isFavorite)
+        }
     }
+
+    private fun setupFavoriteButton() {
+        binding.fabAdd.setOnClickListener {
+            viewModel.toggleFavorite()
+        }
+    }
+
+    private fun updateFavoriteButtonState(isFavorite: Boolean) {
+        binding.fabAdd.setImageResource(
+            if (isFavorite) R.drawable.ic_favorite
+            else R.drawable.ic_favorite_border
+        )
+    }
+
 
     private fun displayEventDetails(event: Event) {
         with(binding) {
