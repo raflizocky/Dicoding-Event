@@ -11,4 +11,5 @@
     <string name="register">Register</string>
     <string name="todoo">TODO</string>
     <string name="quota_info">Sisa kuota: %d</string>
+    <string name="fab">fab</string>
 </resources>
