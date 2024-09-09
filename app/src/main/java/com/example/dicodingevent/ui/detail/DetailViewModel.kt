@@ -6,10 +6,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.dicodingevent.data.database.FavoriteEvent
 import com.example.dicodingevent.data.retrofit.ApiConfig
-import com.example.dicodingevent.data.response.DetailEventResponse
 import com.example.dicodingevent.data.response.Event
 import com.example.dicodingevent.repository.FavoriteEventRepository
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import retrofit2.*
 
 class DetailViewModel(private val repository: FavoriteEventRepository) : ViewModel() {
@@ -26,50 +27,57 @@ class DetailViewModel(private val repository: FavoriteEventRepository) : ViewMod
     val isFavorite: LiveData<Boolean> = _isFavorite
 
     fun fetchEventDetails(eventId: String) {
-        _isLoading.value = true
-        ApiConfig.getApiService().getDetailEvent(eventId).enqueue(object :
-            Callback<DetailEventResponse> {
-            override fun onResponse(call: Call<DetailEventResponse>, response: Response<DetailEventResponse>) {
-                _isLoading.value = false
-                if (response.isSuccessful) {
-                    _event.value = response.body()?.event
-                    checkFavoriteStatus(eventId)
-                } else {
-                    _errorMessage.value = "Error: ${response.code()}"
+        viewModelScope.launch {
+            _isLoading.value = true
+            try {
+                val result = withContext(Dispatchers.IO) {
+                    ApiConfig.getApiService().getDetailEvent(eventId).await()
+                }
+                _isLoading.postValue(false)
+                _event.postValue(result.event)
+                checkFavoriteStatus(eventId)
+            } catch (e: Exception) {
+                _isLoading.postValue(false)
+                when (e) {
+                    is HttpException -> {
+                        _errorMessage.postValue("Error: ${e.code()}")
+                    }
+                    else -> {
+                        _errorMessage.postValue("Network error: ${e.message}")
+                    }
                 }
             }
-
-            override fun onFailure(call: Call<DetailEventResponse>, t: Throwable) {
-                _isLoading.value = false
-                _errorMessage.value = "Network error: ${t.message}"
-            }
-        })
+        }
     }
 
     private fun checkFavoriteStatus(eventId: String) {
         viewModelScope.launch {
-            val favoriteEvent = repository.getFavoriteEventById(eventId).value
-            _isFavorite.value = favoriteEvent != null
+            repository.getFavoriteEventById(eventId).collect { favoriteEvent ->
+                _isFavorite.postValue(favoriteEvent != null)
+            }
         }
     }
 
     fun toggleFavorite() {
         val currentEvent = _event.value ?: return
-        val isFavorite = _isFavorite.value ?: false
+        val currentFavoriteStatus = _isFavorite.value ?: false
 
         viewModelScope.launch {
-            if (isFavorite) {
-                currentEvent.name?.let {
-                    FavoriteEvent(currentEvent.id.toString(),
-                        it, currentEvent.mediaCover)
-                }?.let { repository.delete(it) }
+            if (currentFavoriteStatus) {
+                repository.getFavoriteEventById(currentEvent.id.toString()).collect { favoriteEvent ->
+                    favoriteEvent?.let {
+                        repository.delete(it)
+                    }
+                }
             } else {
-                currentEvent.name?.let {
-                    FavoriteEvent(currentEvent.id.toString(),
-                        it, currentEvent.mediaCover)
-                }?.let { repository.insert(it) }
+                val favoriteEvent = FavoriteEvent(
+                    id = currentEvent.id.toString(),
+                    name = currentEvent.name ?: "",
+                    mediaCover = currentEvent.mediaCover
+                )
+                repository.insert(favoriteEvent)
             }
-            _isFavorite.value = !isFavorite
+            // The favorite status will be updated automatically via the Flow in checkFavoriteStatus
         }
     }
 }

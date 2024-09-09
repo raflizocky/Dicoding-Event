@@ -1,16 +1,16 @@
 package com.example.dicodingevent.repository
 
-import androidx.lifecycle.LiveData
 import com.example.dicodingevent.data.database.FavoriteEvent
 import com.example.dicodingevent.data.database.FavoriteEventDao
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
 
 class FavoriteEventRepository(
     private val favoriteEventDao: FavoriteEventDao,
     private val ioDispatcher: CoroutineDispatcher
 ) {
-    fun getAllFavoriteEvents(): LiveData<List<FavoriteEvent>> = favoriteEventDao.getAllFavoriteEvent()
+    fun getAllFavoriteEvents(): Flow<List<FavoriteEvent>> = favoriteEventDao.getAllFavoriteEvent()
 
     suspend fun insert(favoriteEvent: FavoriteEvent) {
         withContext(ioDispatcher) {
@@ -24,13 +24,7 @@ class FavoriteEventRepository(
         }
     }
 
-    suspend fun update(favoriteEvent: FavoriteEvent) {
-        withContext(ioDispatcher) {
-            favoriteEventDao.update(favoriteEvent)
-        }
-    }
-
-    fun getFavoriteEventById(id: String): LiveData<FavoriteEvent?> {
+    fun getFavoriteEventById(id: String): Flow<FavoriteEvent?> {
         return favoriteEventDao.getFavoriteEventById(id)
     }
 }
