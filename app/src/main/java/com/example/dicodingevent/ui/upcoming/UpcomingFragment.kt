@@ -139,15 +139,18 @@ class UpcomingFragment : Fragment() {
     @RequiresApi(Build.VERSION_CODES.M)
     private fun showNetworkErrorSnackbar() {
         snackbar?.dismiss()
-        snackbar = Snackbar.make(
-            binding.root,
-            "Network not detected. Please check your internet connection.",
-            Snackbar.LENGTH_INDEFINITE
-        ).apply {
-            setAction("Retry") {
-                checkNetworkAndFetchEvents()
+        val rootView = activity?.findViewById<View>(android.R.id.content)
+        rootView?.let {
+            snackbar = Snackbar.make(
+                it,
+                "Network not detected. Please check your internet connection.",
+                Snackbar.LENGTH_INDEFINITE
+            ).apply {
+                setAction("Retry") {
+                    checkNetworkAndFetchEvents()
+                }
+                show()
             }
-            show()
         }
     }
 
