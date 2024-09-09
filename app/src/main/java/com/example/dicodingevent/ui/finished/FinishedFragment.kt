@@ -13,34 +13,32 @@ import android.view.ViewGroup
 import androidx.annotation.RequiresApi
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
+import com.example.dicodingevent.data.UiState
+import com.example.dicodingevent.data.response.ListEventsItem
 import com.example.dicodingevent.ui.EventAdapter
 import com.example.dicodingevent.ui.EventViewModel
-import com.example.dicodingevent.databinding.FragmentDashboardBinding
+import com.example.dicodingevent.databinding.FragmentFinishedBinding
+import com.example.dicodingevent.ui.ViewModelFactory
 import com.google.android.material.snackbar.Snackbar
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class FinishedFragment : Fragment() {
-
-    private var _binding: FragmentDashboardBinding? = null
-
-    // This property is only valid between onCreateView and
-    // onDestroyView.
+    private var _binding: FragmentFinishedBinding? = null
     private val binding get() = _binding!!
 
-    private val viewModel: EventViewModel by activityViewModels()
+    private val viewModel: EventViewModel by viewModels { ViewModelFactory.getInstance(requireContext()) }
     private lateinit var adapter: EventAdapter
     private lateinit var connectivityManager: ConnectivityManager
     private lateinit var networkCallback: ConnectivityManager.NetworkCallback
     private var snackbar: Snackbar? = null
-    private var isNetworkAvailable = false
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        _binding = FragmentDashboardBinding.inflate(inflater, container, false)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+        _binding = FragmentFinishedBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -50,30 +48,30 @@ class FinishedFragment : Fragment() {
         setupRecyclerView()
         setupNetworkCallback()
         observeViewModel()
-        updateNetworkAvailability()
+        checkNetworkAndFetchEvents()
     }
 
     private fun setupRecyclerView() {
         adapter = EventAdapter()
-        binding.rvEvents.adapter = adapter
-        binding.rvEvents.layoutManager = StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
+        binding.rvEvents.apply {
+            this.adapter = this@FinishedFragment.adapter
+            layoutManager = StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
+        }
     }
 
     private fun setupNetworkCallback() {
-        connectivityManager =
-            requireContext().getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        connectivityManager = requireContext().getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         networkCallback = object : ConnectivityManager.NetworkCallback() {
-            @RequiresApi(Build.VERSION_CODES.M)
             override fun onAvailable(network: Network) {
-                activity?.runOnUiThread {
-                    updateNetworkAvailability(true)
+                viewLifecycleOwner.lifecycleScope.launch(Dispatchers.Main) {
+                    viewModel.setNetworkState(true)
+                    viewModel.fetchEvents(0)
                 }
             }
 
-            @RequiresApi(Build.VERSION_CODES.M)
             override fun onLost(network: Network) {
-                activity?.runOnUiThread {
-                    updateNetworkAvailability(false)
+                viewLifecycleOwner.lifecycleScope.launch(Dispatchers.Main) {
+                    viewModel.setNetworkState(false)
                 }
             }
         }
@@ -85,93 +83,86 @@ class FinishedFragment : Fragment() {
     }
 
     @RequiresApi(Build.VERSION_CODES.M)
-    private fun checkNetworkAvailability(): Boolean {
-        val connectivityManager = context?.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-        val network = connectivityManager.activeNetwork
-        val capabilities = connectivityManager.getNetworkCapabilities(network)
-        return capabilities != null && (capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) || capabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR))
-    }
-
-    @RequiresApi(Build.VERSION_CODES.M)
-    private fun updateNetworkAvailability(available: Boolean? = null) {
-        val networkAvailable = available ?: checkNetworkAvailability()
-        isNetworkAvailable = networkAvailable
-        viewModel.setNetworkState(networkAvailable)
-        if (networkAvailable) {
-            viewModel.fetchEvents(0)
+    private fun checkNetworkAndFetchEvents() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            val isNetworkAvailable = isNetworkAvailable()
+            viewModel.setNetworkState(isNetworkAvailable)
+            if (isNetworkAvailable) {
+                viewModel.fetchEvents(0)
+            }
         }
     }
 
     @RequiresApi(Build.VERSION_CODES.M)
     private fun observeViewModel() {
-        viewModel.events.observe(viewLifecycleOwner) { events ->
-            adapter.submitList(events)
-            updateNoDataVisibility(events.isEmpty())
-        }
-
-        viewModel.isLoading.observe(viewLifecycleOwner) { isLoading ->
-            binding.progressBar.isVisible = isLoading
-            binding.rvEvents.isVisible = !isLoading
-            if (isLoading) {
-                binding.tvNoData.isVisible = false
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.uiState.collect { state ->
+                when (state) {
+                    is UiState.Loading -> showLoading()
+                    is UiState.Success -> showEvents(state.data)
+                    is UiState.Error -> showError(state.message)
+                }
             }
         }
 
-        viewModel.networkState.observe(viewLifecycleOwner) { isConnected ->
-            if (!isConnected) {
-                showNetworkErrorSnackbar()
-            } else {
-                snackbar?.dismiss()
-            }
-        }
-
-        viewModel.errorMessage.observe(viewLifecycleOwner) { errorMessage ->
-            if (errorMessage != null && isNetworkAvailable()) {
-                showErrorSnackbar(errorMessage)
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.networkState.collect { isConnected ->
+                if (!isConnected) {
+                    showNetworkErrorSnackbar()
+                } else {
+                    snackbar?.dismiss()
+                }
             }
         }
     }
 
-    private fun updateNoDataVisibility(showNoData: Boolean) {
-        binding.tvNoData.isVisible = showNoData
-        binding.rvEvents.isVisible = !showNoData
+    private fun showLoading() {
+        binding.progressBar.isVisible = true
+        binding.rvEvents.isVisible = false
+        binding.tvNoData.isVisible = false
+    }
+
+    private fun showEvents(events: List<ListEventsItem>) {
+        binding.progressBar.isVisible = false
+        binding.rvEvents.isVisible = true
+        binding.tvNoData.isVisible = events.isEmpty()
+        adapter.submitList(events)
+    }
+
+    private fun showError(message: String) {
+        binding.progressBar.isVisible = false
+        binding.rvEvents.isVisible = false
+        binding.tvNoData.isVisible = true
+        showErrorSnackbar(message)
     }
 
     @RequiresApi(Build.VERSION_CODES.M)
     private fun showNetworkErrorSnackbar() {
-        snackbar?.dismiss()  // Dismiss any existing Snackbar
+        snackbar?.dismiss()
         snackbar = Snackbar.make(
             binding.root,
             "Network not detected. Please check your internet connection.",
             Snackbar.LENGTH_INDEFINITE
         ).apply {
             setAction("Retry") {
-                updateNetworkAvailability()
+                checkNetworkAndFetchEvents()
             }
             show()
         }
     }
 
     private fun showErrorSnackbar(message: String) {
-        snackbar?.dismiss()  // Dismiss any existing Snackbar
-        snackbar = Snackbar.make(
-            binding.root,
-            message,
-            Snackbar.LENGTH_LONG
-        ).apply {
-            show()
-        }
+        snackbar?.dismiss()
+        snackbar = Snackbar.make(binding.root, message, Snackbar.LENGTH_LONG).apply { show() }
     }
 
     @RequiresApi(Build.VERSION_CODES.M)
-    private fun isNetworkAvailable(): Boolean {
-        val connectivityManager =
-            context?.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+    private suspend fun isNetworkAvailable(): Boolean = withContext(Dispatchers.IO) {
+        val connectivityManager = context?.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         val network = connectivityManager.activeNetwork
         val capabilities = connectivityManager.getNetworkCapabilities(network)
-        return capabilities != null && (capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) || capabilities.hasTransport(
-            NetworkCapabilities.TRANSPORT_CELLULAR
-        ))
+        capabilities != null && (capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) ||
+                capabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR))
     }
 
     override fun onDestroyView() {

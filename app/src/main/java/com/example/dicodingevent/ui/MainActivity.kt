@@ -22,28 +22,27 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
-        val pref = SettingPreferences.getInstance(application.dataStore)
+        // Initialize SettingPreferences and ViewModel
+        SettingPreferences.getInstance(application.dataStore)
         settingViewModel = ViewModelProvider(this, ViewModelFactory.getInstance(this))[SettingViewModel::class.java]
 
-        settingViewModel.themeSettings.observe(this) { isDarkModeActive: Boolean ->
+        // Observe LiveData for theme settings
+        settingViewModel.getThemeSettings().observe(this) { isDarkModeActive ->
             AppCompatDelegate.setDefaultNightMode(
                 if (isDarkModeActive) AppCompatDelegate.MODE_NIGHT_YES
                 else AppCompatDelegate.MODE_NIGHT_NO
             )
         }
 
-        binding = ActivityMainBinding.inflate(layoutInflater)
-        setContentView(binding.root)
-
+        // Setup BottomNavigationView and NavController
         val navView: BottomNavigationView = binding.navView
-
         val navController = findNavController(R.id.nav_host_fragment_activity_main)
-        // Passing each menu ID as a set of Ids because each
-        // menu should be considered as top level destinations.
         val appBarConfiguration = AppBarConfiguration(
             setOf(
-                R.id.navigation_upcoming, R.id.navigation_finished, R.id.navigation_favorite
+                R.id.navigation_upcoming, R.id.navigation_finished, R.id.navigation_favorite, R.id.navigation_setting
             )
         )
         setupActionBarWithNavController(navController, appBarConfiguration)

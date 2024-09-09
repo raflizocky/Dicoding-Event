@@ -1,47 +1,44 @@
 package com.example.dicodingevent.ui
 
 import androidx.lifecycle.*
-import com.example.dicodingevent.data.retrofit.ApiConfig
-import com.example.dicodingevent.data.response.EventResponse
+import com.example.dicodingevent.data.UiState
 import com.example.dicodingevent.data.response.ListEventsItem
-import retrofit2.Callback
-import retrofit2.Call
-import retrofit2.Response
+import com.example.dicodingevent.data.retrofit.ApiService
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
+import retrofit2.HttpException
 
-class EventViewModel : ViewModel() {
-    private val _events = MutableLiveData<List<ListEventsItem>>()
-    val events: LiveData<List<ListEventsItem>> = _events
+class EventViewModel(private val apiService: ApiService) : ViewModel() {
+    private val _uiState = MutableStateFlow<UiState<List<ListEventsItem>>>(UiState.Loading)
+    val uiState: StateFlow<UiState<List<ListEventsItem>>> = _uiState.asStateFlow()
 
-    private val _errorMessage = MutableLiveData<String>()
-    val errorMessage: LiveData<String> = _errorMessage
-
-    private val _isLoading = MutableLiveData<Boolean>()
-    val isLoading: LiveData<Boolean> = _isLoading
-
-    private val _networkState = MutableLiveData<Boolean>()
-    val networkState: LiveData<Boolean> = _networkState
+    private val _networkState = MutableStateFlow(true)
+    val networkState: StateFlow<Boolean> = _networkState.asStateFlow()
 
     fun setNetworkState(isConnected: Boolean) {
         _networkState.value = isConnected
     }
 
     fun fetchEvents(active: Int) {
-        _isLoading.value = true
-        _events.value = emptyList() // Clear the current list before fetching new data
-        ApiConfig.getApiService().getEvents(active).enqueue(object : Callback<EventResponse> {
-            override fun onResponse(call: Call<EventResponse>, response: Response<EventResponse>) {
-                _isLoading.value = false
-                if (response.isSuccessful) {
-                    _events.value = response.body()?.listEvents
+        viewModelScope.launch {
+            _uiState.value = UiState.Loading
+            try {
+                val response = apiService.getEvents(active)
+                if (response.listEvents.isEmpty()) {
+                    _uiState.value = UiState.Error("No events found")
                 } else {
-                    _errorMessage.value = "Error: ${response.code()}"
+                    _uiState.value = UiState.Success(response.listEvents)
                 }
+            } catch (e: Exception) {
+                _uiState.value = UiState.Error(
+                    when (e) {
+                        is HttpException -> "Error: ${e.code()}"
+                        else -> "Network error: ${e.message}"
+                    }
+                )
             }
-
-            override fun onFailure(call: Call<EventResponse>, t: Throwable) {
-                _isLoading.value = false
-                _errorMessage.value = "Network error: ${t.message}"
-            }
-        })
+        }
     }
 }

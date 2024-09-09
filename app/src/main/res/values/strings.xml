@@ -3,13 +3,15 @@
     <string name="title_activity_main">MainActivity</string>
     <string name="title_upcoming">Upcoming</string>
     <string name="title_finished">Finished</string>
-    <string name="your_title_here">Your Title Here</string>
     <string name="no_events_found">No events found.</string>
-    <string name="no_events_foundd">No events found.</string>
-    <string name="todo">TODO</string>
-    <string name="informasi">Informasi:</string>
-    <string name="register">Register</string>
-    <string name="todoo">TODO</string>
+    <string name="no_favorite_events">No favorite events found.</string>
+    <string name="information">Informasi</string>
+    <string name="title_setting">Setting</string>
+    <string name="appearance">Appearance</string>
+    <string name="btn_register">Register</string>
+    <string name="event_image_description">Event Image Description</string>
     <string name="quota_info">Sisa kuota: %d</string>
-    <string name="fab">fab</string>
+    <string name="title_favorite">Favorite</string>
+    <string name="add_to_favorites">Add To Favorites</string>
+    <string name="dark_mode">Dark Mode</string>
 </resources>

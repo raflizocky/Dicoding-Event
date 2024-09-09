@@ -5,16 +5,12 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import androidx.room.Update
 import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface FavoriteEventDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insert(favoriteEvent: FavoriteEvent)
-
-    @Update
-    suspend fun update(favoriteEvent: FavoriteEvent)
 
     @Delete
     suspend fun delete(favoriteEvent: FavoriteEvent)

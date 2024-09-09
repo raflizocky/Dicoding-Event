@@ -8,11 +8,14 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.text.HtmlCompat
 import com.bumptech.glide.Glide
 import androidx.core.view.isVisible
+import androidx.lifecycle.lifecycleScope
 import com.example.dicodingevent.R
+import com.example.dicodingevent.data.UiState
 import com.example.dicodingevent.data.response.Event
 import com.example.dicodingevent.databinding.ActivityDetailBinding
 import com.example.dicodingevent.ui.ViewModelFactory
 import com.google.android.material.snackbar.Snackbar
+import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Locale
 
@@ -26,6 +29,7 @@ class DetailActivity : AppCompatActivity() {
     private val viewModel: DetailViewModel by viewModels {
         ViewModelFactory.getInstance(this)
     }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityDetailBinding.inflate(layoutInflater)
@@ -39,21 +43,34 @@ class DetailActivity : AppCompatActivity() {
     }
 
     private fun observeViewModel() {
-        viewModel.event.observe(this) { event ->
-            event?.let { displayEventDetails(it) }
+        lifecycleScope.launch {
+            viewModel.uiState.collect { state ->
+                when (state) {
+                    is UiState.Loading -> {
+                        binding.progressBar.isVisible = true
+                        binding.cardView.isVisible = false
+                    }
+
+                    is UiState.Success -> {
+                        binding.progressBar.isVisible = false
+                        binding.cardView.isVisible = true
+                        state.data?.let { displayEventDetails(it) }
+                            ?: showSnackbar("Event details not available")
+                    }
+
+                    is UiState.Error -> {
+                        binding.progressBar.isVisible = false
+                        binding.cardView.isVisible = false
+                        showSnackbar(state.message)
+                    }
+                }
+            }
         }
 
-        viewModel.isLoading.observe(this) { isLoading ->
-            binding.progressBar.isVisible = isLoading
-            binding.cardView.isVisible = !isLoading
-        }
-
-        viewModel.errorMessage.observe(this) { errorMessage ->
-            showSnackbar(errorMessage)
-        }
-
-        viewModel.isFavorite.observe(this) { isFavorite ->
-            updateFavoriteButtonState(isFavorite)
+        lifecycleScope.launch {
+            viewModel.isFavorite.collect { isFavorite ->
+                updateFavoriteButtonState(isFavorite)
+            }
         }
     }
 

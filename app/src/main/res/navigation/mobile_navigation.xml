@@ -8,13 +8,13 @@
         android:id="@+id/navigation_upcoming"
         android:name="com.example.dicodingevent.ui.upcoming.UpcomingFragment"
         android:label="@string/title_upcoming"
-        tools:layout="@layout/fragment_home" />
+        tools:layout="@layout/fragment_upcoming" />
 
     <fragment
         android:id="@+id/navigation_finished"
         android:name="com.example.dicodingevent.ui.finished.FinishedFragment"
         android:label="@string/title_finished"
-        tools:layout="@layout/fragment_dashboard" />
+        tools:layout="@layout/fragment_finished" />
 
     <fragment
         android:id="@+id/navigation_favorite"

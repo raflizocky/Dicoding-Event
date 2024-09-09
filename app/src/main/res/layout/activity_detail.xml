@@ -28,14 +28,14 @@
             android:scaleType="centerCrop"
             app:layout_constraintTop_toTopOf="parent"
             tools:src="@tools:sample/backgrounds/scenic"
-            android:contentDescription="@string/todo" />
+            android:contentDescription="@string/event_image_description" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/fab_add"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="end|top"
-            android:contentDescription="@string/fab"
+            android:contentDescription="@string/add_to_favorites"
             android:src="@drawable/ic_favorite_border"
             app:layout_constraintBottom_toBottomOf="@+id/iv_event_image"
             app:layout_constraintEnd_toEndOf="parent"
@@ -88,7 +88,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
-                    android:text="@string/informasi"
+                    android:text="@string/information"
                     android:textStyle="bold" />
 
                 <TextView
@@ -103,7 +103,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="24dp"
-                    android:text="@string/register"
+                    android:text="@string/btn_register"
                     android:textColor="#FFFFFF" />
 
             </LinearLayout>

@@ -1,83 +1,75 @@
 package com.example.dicodingevent.ui.detail
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.dicodingevent.data.UiState
 import com.example.dicodingevent.data.database.FavoriteEvent
 import com.example.dicodingevent.data.retrofit.ApiConfig
 import com.example.dicodingevent.data.response.Event
 import com.example.dicodingevent.repository.FavoriteEventRepository
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import retrofit2.*
 
 class DetailViewModel(private val repository: FavoriteEventRepository) : ViewModel() {
-    private val _event = MutableLiveData<Event?>()
-    val event: LiveData<Event?> = _event
+    private val _uiState = MutableStateFlow<UiState<Event?>>(UiState.Loading)
+    val uiState: StateFlow<UiState<Event?>> = _uiState.asStateFlow()
 
-    private val _isLoading = MutableLiveData<Boolean>()
-    val isLoading: LiveData<Boolean> = _isLoading
-
-    private val _errorMessage = MutableLiveData<String>()
-    val errorMessage: LiveData<String> = _errorMessage
-
-    private val _isFavorite = MutableLiveData<Boolean>()
-    val isFavorite: LiveData<Boolean> = _isFavorite
+    private val _isFavorite = MutableStateFlow(false)
+    val isFavorite: StateFlow<Boolean> = _isFavorite.asStateFlow()
 
     fun fetchEventDetails(eventId: String) {
         viewModelScope.launch {
-            _isLoading.value = true
+            _uiState.value = UiState.Loading
             try {
-                val result = withContext(Dispatchers.IO) {
-                    ApiConfig.getApiService().getDetailEvent(eventId).await()
+                val result = ApiConfig.apiService.getDetailEvent(eventId)
+                if (result.event != null) {
+                    _uiState.value = UiState.Success(result.event)
+                    checkFavoriteStatus(eventId)
+                } else {
+                    _uiState.value = UiState.Error("Event details not found")
                 }
-                _isLoading.postValue(false)
-                _event.postValue(result.event)
-                checkFavoriteStatus(eventId)
             } catch (e: Exception) {
-                _isLoading.postValue(false)
-                when (e) {
-                    is HttpException -> {
-                        _errorMessage.postValue("Error: ${e.code()}")
+                _uiState.value = UiState.Error(
+                    when (e) {
+                        is HttpException -> "Error: ${e.code()}"
+                        else -> "Network error: ${e.message}"
                     }
-                    else -> {
-                        _errorMessage.postValue("Network error: ${e.message}")
-                    }
-                }
+                )
             }
         }
     }
 
     private fun checkFavoriteStatus(eventId: String) {
         viewModelScope.launch {
-            repository.getFavoriteEventById(eventId).collect { favoriteEvent ->
-                _isFavorite.postValue(favoriteEvent != null)
-            }
+            _isFavorite.value = repository.getFavoriteEventById(eventId).firstOrNull() != null
         }
     }
 
     fun toggleFavorite() {
-        val currentEvent = _event.value ?: return
-        val currentFavoriteStatus = _isFavorite.value ?: false
+        val currentState = _uiState.value
+        if (currentState !is UiState.Success || currentState.data == null) return
+        val currentEvent = currentState.data
+        val currentFavoriteStatus = _isFavorite.value
 
         viewModelScope.launch {
             if (currentFavoriteStatus) {
-                repository.getFavoriteEventById(currentEvent.id.toString()).collect { favoriteEvent ->
-                    favoriteEvent?.let {
-                        repository.delete(it)
-                    }
-                }
-            } else {
-                val favoriteEvent = FavoriteEvent(
+                repository.delete(FavoriteEvent(
                     id = currentEvent.id.toString(),
                     name = currentEvent.name ?: "",
                     mediaCover = currentEvent.mediaCover
-                )
-                repository.insert(favoriteEvent)
+                ))
+            } else {
+                repository.insert(FavoriteEvent(
+                    id = currentEvent.id.toString(),
+                    name = currentEvent.name ?: "",
+                    mediaCover = currentEvent.mediaCover
+                ))
             }
-            // The favorite status will be updated automatically via the Flow in checkFavoriteStatus
+            _isFavorite.value = !currentFavoriteStatus
         }
     }
 }

@@ -5,12 +5,11 @@ import com.example.dicodingevent.data.database.FavoriteEventRoomDatabase
 import com.example.dicodingevent.repository.FavoriteEventRepository
 import com.example.dicodingevent.ui.setting.SettingPreferences
 import com.example.dicodingevent.ui.setting.dataStore
-import kotlinx.coroutines.Dispatchers
 
 object Injection {
     fun provideRepository(context: Context): FavoriteEventRepository {
-        val database = FavoriteEventRoomDatabase.getDatabase(context)
-        return FavoriteEventRepository(database.favoriteEventDao(), Dispatchers.IO)
+        val database by lazy { FavoriteEventRoomDatabase.getDatabase(context) }
+        return FavoriteEventRepository(database.favoriteEventDao())
     }
 
     fun provideSettingPreferences(context: Context): SettingPreferences {
