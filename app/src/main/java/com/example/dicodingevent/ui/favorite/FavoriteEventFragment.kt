@@ -11,7 +11,6 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.dicodingevent.databinding.FragmentFavoriteEventBinding
-import com.example.dicodingevent.di.Injection
 import com.example.dicodingevent.ui.ViewModelFactory
 import com.example.dicodingevent.ui.detail.DetailActivity
 import com.google.android.material.snackbar.Snackbar
@@ -24,7 +23,7 @@ class FavoriteEventFragment : Fragment() {
     private val binding get() = _binding!!
 
     private val viewModel: FavoriteEventViewModel by viewModels {
-        ViewModelFactory.getInstance(Injection.provideRepository(requireContext()))
+        ViewModelFactory.getInstance(requireContext())
     }
     private lateinit var adapter: FavoriteEventAdapter
 

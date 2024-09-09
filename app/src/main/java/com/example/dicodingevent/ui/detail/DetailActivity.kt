@@ -11,7 +11,6 @@ import androidx.core.view.isVisible
 import com.example.dicodingevent.R
 import com.example.dicodingevent.data.response.Event
 import com.example.dicodingevent.databinding.ActivityDetailBinding
-import com.example.dicodingevent.di.Injection
 import com.example.dicodingevent.ui.ViewModelFactory
 import com.google.android.material.snackbar.Snackbar
 import java.text.SimpleDateFormat
@@ -25,9 +24,8 @@ class DetailActivity : AppCompatActivity() {
     private lateinit var binding: ActivityDetailBinding
 
     private val viewModel: DetailViewModel by viewModels {
-        ViewModelFactory.getInstance(Injection.provideRepository(this))
+        ViewModelFactory.getInstance(this)
     }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityDetailBinding.inflate(layoutInflater)
