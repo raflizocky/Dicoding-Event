@@ -3,12 +3,13 @@ package com.example.dicodingevent.ui.detail
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.view.MenuItem
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.text.HtmlCompat
-import com.bumptech.glide.Glide
 import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
+import com.bumptech.glide.Glide
 import com.example.dicodingevent.R
 import com.example.dicodingevent.data.UiState
 import com.example.dicodingevent.data.response.Event
@@ -35,11 +36,22 @@ class DetailActivity : AppCompatActivity() {
         binding = ActivityDetailBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.setDisplayShowHomeEnabled(true)
+
         val eventId = intent.getStringExtra(EVENT_DETAIL) ?: return finish()
 
         viewModel.fetchEventDetails(eventId)
         observeViewModel()
         setupFavoriteButton()
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (item.itemId == android.R.id.home) {
+            onBackPressed()
+            return true
+        }
+        return super.onOptionsItemSelected(item)
     }
 
     private fun observeViewModel() {
@@ -95,9 +107,16 @@ class DetailActivity : AppCompatActivity() {
                 .into(ivEventImage)
 
             tvEventName.text = event.name
-            tvEventDate.text = formatDateTime(event.beginTime ?: "")
-            val remainingQuota = (event.quota ?: 0) - (event.registrants ?: 0)
-            tvEventLocation.text = getString(R.string.quota_info, remainingQuota)
+            tvEventSummary.text = event.summary
+            tvEventCategory.text = getString(R.string.category_format, event.category)
+            tvEventOwner.text = getString(R.string.organizer_format, event.ownerName)
+            tvEventCity.text = getString(R.string.location_format, event.cityName)
+            tvEventDate.text = getString(R.string.date_format,
+                event.beginTime?.let { formatDate(it) })
+            tvEventTime.text = getString(R.string.time_format,
+                event.beginTime?.let { formatTime(it) }, event.endTime?.let { formatTime(it) })
+            tvEventQuota.text = getString(R.string.quota_format, event.quota)
+            tvEventRegistrants.text = getString(R.string.registrants_format, event.registrants)
             tvEventDescription.text = HtmlCompat.fromHtml(
                 event.description ?: "",
                 HtmlCompat.FROM_HTML_MODE_LEGACY
@@ -112,9 +131,20 @@ class DetailActivity : AppCompatActivity() {
         }
     }
 
-    private fun formatDateTime(dateTimeString: String): String {
+    private fun formatDate(dateTimeString: String): String {
         val inputFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
-        val outputFormat = SimpleDateFormat("dd MMMM yyyy, HH:mm", Locale.getDefault())
+        val outputFormat = SimpleDateFormat("MMMM d, yyyy", Locale.getDefault())
+        return try {
+            val date = inputFormat.parse(dateTimeString)
+            outputFormat.format(date!!)
+        } catch (e: Exception) {
+            dateTimeString
+        }
+    }
+
+    private fun formatTime(dateTimeString: String): String {
+        val inputFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
+        val outputFormat = SimpleDateFormat("h:mm a", Locale.getDefault())
         return try {
             val date = inputFormat.parse(dateTimeString)
             outputFormat.format(date!!)

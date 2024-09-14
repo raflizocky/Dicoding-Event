@@ -16,10 +16,10 @@
             style="?android:attr/progressBarStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:layout_constraintBottom_toBottomOf="@+id/cardView"
-            app:layout_constraintEnd_toEndOf="@+id/cardView"
-            app:layout_constraintStart_toStartOf="@+id/cardView"
-            app:layout_constraintTop_toTopOf="@+id/cardView" />
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <ImageView
             android:id="@+id/iv_event_image"
@@ -28,7 +28,7 @@
             android:scaleType="centerCrop"
             app:layout_constraintTop_toTopOf="parent"
             tools:src="@tools:sample/backgrounds/scenic"
-            android:contentDescription="@string/event_image_description" />
+            android:contentDescription="@string/event_cover_image" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/fab_add"
@@ -42,7 +42,7 @@
             app:layout_constraintHorizontal_bias="0.929"
             app:layout_constraintStart_toStartOf="@+id/iv_event_image"
             app:layout_constraintTop_toTopOf="@+id/iv_event_image"
-            app:layout_constraintVertical_bias="1.0" />
+            app:layout_constraintVertical_bias="0.93" />
 
         <androidx.cardview.widget.CardView
             android:id="@+id/cardView"
@@ -63,32 +63,74 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textAlignment="center"
-                    android:layout_marginTop="16dp"
                     android:textSize="20sp"
                     android:textStyle="bold"
-                    tools:text="The Blueprint for Android App Success: Expert Advice and Insights" />
+                    tools:text="Sesi Karir Android: Memulai Karir Sebagai Android Developer" />
+
+                <TextView
+                    android:id="@+id/tv_event_summary"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:textAlignment="center"
+                    android:textStyle="italic"
+                    tools:text="Kupas tuntas langkah-langkah memulai karir sebagai developer aplikasi Android" />
+
+                <TextView
+                    android:id="@+id/tv_event_category"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:textStyle="bold"
+                    tools:text="Kategori: Tech-talk" />
+
+                <TextView
+                    android:id="@+id/tv_event_owner"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    tools:text="Penyelenggara: GDSC Mulawarman University" />
+
+                <TextView
+                    android:id="@+id/tv_event_city"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    tools:text="Lokasi: Kota Samarinda" />
 
                 <TextView
                     android:id="@+id/tv_event_date"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
-                    android:textColor="#666666"
-                    tools:text="2024-06-11 19:00:00" />
+                    tools:text="Tanggal: 18 Mei 2024" />
 
                 <TextView
-                    android:id="@+id/tv_event_location"
+                    android:id="@+id/tv_event_time"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
-                    android:textColor="#666666"
-                    tools:text="Sisa Kuota: 1866" />
+                    tools:text="Waktu: 10:00 - 12:00" />
+
+                <TextView
+                    android:id="@+id/tv_event_quota"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    tools:text="Kuota: 300" />
+
+                <TextView
+                    android:id="@+id/tv_event_registrants"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    tools:text="Pendaftar: 167" />
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
-                    android:text="@string/information"
+                    android:text="@string/event_description"
                     android:textStyle="bold" />
 
                 <TextView
@@ -96,14 +138,14 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
-                    tools:text="Acara ini sepenuhnya GRATIS dan akan diselenggarakan..." />
+                    tools:text="Karir IT memiliki banyak cabang, mulai dari Software, Hardware, Jaringan, Sistem Cerdas..." />
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btn_register"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="24dp"
-                    android:text="@string/btn_register"
+                    android:text="@string/register"
                     android:textColor="#FFFFFF" />
 
             </LinearLayout>

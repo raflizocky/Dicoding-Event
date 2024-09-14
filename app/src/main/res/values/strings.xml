@@ -1,17 +1,22 @@
 <resources>
     <string name="app_name">Dicoding Event</string>
-    <string name="title_activity_main">MainActivity</string>
     <string name="title_upcoming">Upcoming</string>
     <string name="title_finished">Finished</string>
     <string name="no_events_found">No events found.</string>
     <string name="no_favorite_events">No favorite events found.</string>
-    <string name="information">Informasi</string>
     <string name="title_setting">Setting</string>
     <string name="appearance">Appearance</string>
-    <string name="btn_register">Register</string>
-    <string name="event_image_description">Event Image Description</string>
-    <string name="quota_info">Sisa kuota: %d</string>
+    <string name="register">Daftar</string>
+    <string name="event_cover_image">Gambar Sampul Acara</string>
     <string name="title_favorite">Favorite</string>
     <string name="add_to_favorites">Add To Favorites</string>
     <string name="dark_mode">Dark Mode</string>
+    <string name="event_description">Deskripsi Acara:</string>
+    <string name="category_format">Kategori: %s</string>
+    <string name="organizer_format">Penyelenggara: %s</string>
+    <string name="location_format">Lokasi: %s</string>
+    <string name="date_format">Tanggal: %s</string>
+    <string name="time_format">Waktu: %s - %s</string>
+    <string name="quota_format">Kuota: %d</string>
+    <string name="registrants_format">Pendaftar: %d</string>
 </resources>
