@@ -26,7 +26,7 @@ class EventAdapter : ListAdapter<ListEventsItem, EventAdapter.MyViewHolder>(DIFF
         fun bind(event: ListEventsItem) {
             binding.itemTitleTextView.text = event.name
             Glide.with(itemView.context)
-                .load(event.imageLogo)
+                .load(event.mediaCover)
                 .into(binding.itemImageView)
 
             itemView.setOnClickListener {
