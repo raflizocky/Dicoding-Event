@@ -16,13 +16,13 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
+import com.example.dicodingevent.R
 import com.example.dicodingevent.data.UiState
 import com.example.dicodingevent.data.response.ListEventsItem
+import com.example.dicodingevent.databinding.FragmentFinishedBinding
 import com.example.dicodingevent.ui.EventAdapter
 import com.example.dicodingevent.ui.EventViewModel
-import com.example.dicodingevent.databinding.FragmentFinishedBinding
 import com.example.dicodingevent.ui.ViewModelFactory
-import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -35,7 +35,6 @@ class FinishedFragment : Fragment() {
     private lateinit var adapter: EventAdapter
     private lateinit var connectivityManager: ConnectivityManager
     private lateinit var networkCallback: ConnectivityManager.NetworkCallback
-    private var snackbar: Snackbar? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentFinishedBinding.inflate(inflater, container, false)
@@ -64,14 +63,13 @@ class FinishedFragment : Fragment() {
         networkCallback = object : ConnectivityManager.NetworkCallback() {
             override fun onAvailable(network: Network) {
                 viewLifecycleOwner.lifecycleScope.launch(Dispatchers.Main) {
-                    viewModel.setNetworkState(true)
                     viewModel.fetchEvents(0)
                 }
             }
 
             override fun onLost(network: Network) {
                 viewLifecycleOwner.lifecycleScope.launch(Dispatchers.Main) {
-                    viewModel.setNetworkState(false)
+                    viewModel.fetchEvents(0)
                 }
             }
         }
@@ -86,14 +84,14 @@ class FinishedFragment : Fragment() {
     private fun checkNetworkAndFetchEvents() {
         viewLifecycleOwner.lifecycleScope.launch {
             val isNetworkAvailable = isNetworkAvailable()
-            viewModel.setNetworkState(isNetworkAvailable)
             if (isNetworkAvailable) {
                 viewModel.fetchEvents(0)
+            } else {
+                showNetworkError()
             }
         }
     }
 
-    @RequiresApi(Build.VERSION_CODES.M)
     private fun observeViewModel() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.uiState.collect { state ->
@@ -101,16 +99,6 @@ class FinishedFragment : Fragment() {
                     is UiState.Loading -> showLoading()
                     is UiState.Success -> showEvents(state.data)
                     is UiState.Error -> showError(state.message)
-                }
-            }
-        }
-
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewModel.networkState.collect { isConnected ->
-                if (!isConnected) {
-                    showNetworkErrorSnackbar()
-                } else {
-                    snackbar?.dismiss()
                 }
             }
         }
@@ -133,30 +121,14 @@ class FinishedFragment : Fragment() {
         binding.progressBar.isVisible = false
         binding.rvEvents.isVisible = false
         binding.tvNoData.isVisible = true
-        showErrorSnackbar(message)
+        binding.tvNoData.text = message
     }
 
-    @RequiresApi(Build.VERSION_CODES.M)
-    private fun showNetworkErrorSnackbar() {
-        snackbar?.dismiss()
-        val rootView = activity?.findViewById<View>(android.R.id.content)
-        rootView?.let {
-            snackbar = Snackbar.make(
-                it,
-                "Network not detected. Please check your internet connection.",
-                Snackbar.LENGTH_INDEFINITE
-            ).apply {
-                setAction("Retry") {
-                    checkNetworkAndFetchEvents()
-                }
-                show()
-            }
-        }
-    }
-
-    private fun showErrorSnackbar(message: String) {
-        snackbar?.dismiss()
-        snackbar = Snackbar.make(binding.root, message, Snackbar.LENGTH_LONG).apply { show() }
+    private fun showNetworkError() {
+        binding.progressBar.isVisible = false
+        binding.rvEvents.isVisible = false
+        binding.tvNoData.isVisible = true
+        binding.tvNoData.text = getString(R.string.network_not_detected)
     }
 
     @RequiresApi(Build.VERSION_CODES.M)

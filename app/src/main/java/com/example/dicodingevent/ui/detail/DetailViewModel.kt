@@ -4,15 +4,15 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.dicodingevent.data.UiState
 import com.example.dicodingevent.data.database.FavoriteEvent
-import com.example.dicodingevent.data.retrofit.ApiConfig
 import com.example.dicodingevent.data.response.Event
+import com.example.dicodingevent.data.retrofit.ApiConfig
 import com.example.dicodingevent.repository.FavoriteEventRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
-import retrofit2.*
+import retrofit2.HttpException
 
 class DetailViewModel(private val repository: FavoriteEventRepository) : ViewModel() {
     private val _uiState = MutableStateFlow<UiState<Event?>>(UiState.Loading)
@@ -36,7 +36,7 @@ class DetailViewModel(private val repository: FavoriteEventRepository) : ViewMod
                 _uiState.value = UiState.Error(
                     when (e) {
                         is HttpException -> "Error: ${e.code()}"
-                        else -> "Network error: ${e.message}"
+                        else -> "No internet connection"
                     }
                 )
             }

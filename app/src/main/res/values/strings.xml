@@ -19,4 +19,5 @@
     <string name="time_format">Waktu: %s - %s</string>
     <string name="quota_format">Kuota: %d</string>
     <string name="registrants_format">Pendaftar: %d</string>
+    <string name="network_not_detected">No internet connection.</string>
 </resources>

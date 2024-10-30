@@ -1,6 +1,7 @@
 package com.example.dicodingevent.ui
 
-import androidx.lifecycle.*
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.dicodingevent.data.UiState
 import com.example.dicodingevent.data.response.ListEventsItem
 import com.example.dicodingevent.data.retrofit.ApiService
@@ -13,13 +14,6 @@ import retrofit2.HttpException
 class EventViewModel(private val apiService: ApiService) : ViewModel() {
     private val _uiState = MutableStateFlow<UiState<List<ListEventsItem>>>(UiState.Loading)
     val uiState: StateFlow<UiState<List<ListEventsItem>>> = _uiState.asStateFlow()
-
-    private val _networkState = MutableStateFlow(true)
-    val networkState: StateFlow<Boolean> = _networkState.asStateFlow()
-
-    fun setNetworkState(isConnected: Boolean) {
-        _networkState.value = isConnected
-    }
 
     fun fetchEvents(active: Int) {
         viewModelScope.launch {
@@ -35,7 +29,7 @@ class EventViewModel(private val apiService: ApiService) : ViewModel() {
                 _uiState.value = UiState.Error(
                     when (e) {
                         is HttpException -> "Error: ${e.code()}"
-                        else -> "Network error: ${e.message}"
+                        else -> "No internet connection"
                     }
                 )
             }
