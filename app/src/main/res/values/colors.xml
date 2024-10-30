@@ -1,2 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources />
+<resources>
+    <!-- Light Theme -->
+    <color name="light_primary">#1565C0</color>
+    <color name="light_on_primary">#FFFFFF</color>
+    <color name="light_primary_container">#ECEFFF</color>
+    <color name="light_on_primary_container">#001944</color>
+    <color name="light_secondary">#006064</color>
+    <color name="light_on_secondary">#FFFFFF</color>
+    <color name="light_secondary_container">#7FFBFF</color>
+    <color name="light_on_secondary_container">#001F21</color>
+    <color name="light_background">#FAFAFA</color>
+    <color name="light_on_background">#191C1D</color>
+    <color name="light_surface">#FAFAFA</color>
+    <color name="light_on_surface">#191C1D</color>
+
+    <!-- Dark Theme -->
+    <color name="dark_primary">#93C6FF</color>
+    <color name="dark_on_primary">#002F60</color>
+    <color name="dark_primary_container">#004382</color>
+    <color name="dark_on_primary_container">#D3E3FF</color>
+    <color name="dark_secondary">#48D4D8</color>
+    <color name="dark_on_secondary">#003536</color>
+    <color name="dark_secondary_container">#004D50</color>
+    <color name="dark_on_secondary_container">#78FBFF</color>
+    <color name="dark_background">#121212</color>
+    <color name="dark_on_background">#E1E2E1</color>
+    <color name="dark_surface">#121212</color>
+    <color name="dark_on_surface">#E1E2E1</color>
+</resources>
