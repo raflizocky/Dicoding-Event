@@ -1,7 +1,3 @@
-# 📺 Dicoding Event
-
-**Dicoding Event** is an Android app for discovering upcoming and past events from Dicoding Indonesia. 🇮🇩
-
 ## Demo
 
 <video src="https://github.com/user-attachments/assets/20c281bb-a4ad-4bc0-97a1-6396be0ada50"></video>
@@ -15,7 +11,6 @@
 
 ## Download
 
-- Updated at: 2024-10-30
 - Min. Android version: Android 5.0 Lollipop (API level 21)
 - Download: [APK](https://github.com/raflizocky/Dicoding-Event/releases/tag/v1.0.0)
 
@@ -25,30 +20,19 @@
 
 ## Building
 
-To build this project, you need the latest stable of [Android Studio](https://developer.android.com/studio).
+To build this project, you need at least [Android Studio](https://developer.android.com/studio) Iguana or a later stable version.
 
-1. Clone the project and open in Android Studio.
-2. Sync project with Gradle then Run `app`.
+1. Clone the project and open it in Android Studio.  
+2. Sync the project with Gradle, then run the app.  
+
+## Contributing
+
+If you encounter any issues or would like to contribute to the project, feel free to:
+
+-   Report any [issues](https://github.com/raflizocky/Dicoding-Event/issues)
+-   Submit a [pull request](https://github.com/raflizocky/Dicoding-Event/pulls)
+-   Participate in [discussions](https://github.com/raflizocky/Dicoding-Event/discussions) for any questions, feedback, or suggestions
 
 ## License
-```
-Copyright (c) 2024 Rafli Zocky Leonard
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-```
+Code released under the [MIT License](https://github.com/raflizocky/Dicoding-Event/blob/master/LICENSE).
